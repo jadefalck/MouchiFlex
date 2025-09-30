@@ -123,17 +123,32 @@ export default function Home() {
             </div>
 
             <div style={{ minWidth: 260, flex: 1 }}>
-              <p style={{ margin: "0 0 6px 0", lineHeight: 1.55, fontSize: "clamp(14px, 2.4vw, 16px)" }}>
-                <b>MouchiFlex</b> est un personnage qui lutte activement pour{" "}
-                <b>déjouer les routines et systèmes absurdes de la ville</b> :
-                il encourage l’entraide, détourne les obstacles par la créativité,
-                et prouve qu’on peut avancer autrement — grâce au mouvement, à la
-                souplesse et à l’humour. Chaque univers est un “système” à contourner.
+              <p
+                style={{
+                  margin: "0 0 6px 0",
+                  lineHeight: 1.55,
+                  fontSize: "clamp(14px, 2.4vw, 16px)",
+                }}
+              >
+                <b>MouchiFlex</b> n’est pas un héros classique… C’est un personnage{" "}
+                <b>attachiant et grande gueule</b>, parfois un peu misogyne, persuadé
+                d’être au-dessus de tout le monde. 🙄 Pour le mettre au défi, on lui a
+                préparé une série de <b>jeux absurdes</b> qu’il devra terminer s’il veut
+                continuer à faire croire qu’il est “trop fort”. Chaque univers est conçu
+                pour lui mettre des bâtons dans les roues et tester sa prétendue
+                supériorité. 
               </p>
-              <p style={{ margin: 0, opacity: 0.8, fontSize: "clamp(13px, 2.2vw, 15px)" }}>
+              <p
+                style={{
+                  margin: 0,
+                  opacity: 0.8,
+                  fontSize: "clamp(13px, 2.2vw, 15px)",
+                }}
+              >
                 <i>Devise :</i> « <b>Hani tamid tso dek</b> »
               </p>
             </div>
+
           </section>
 
           {/* Carte "Le concept" */}
@@ -159,8 +174,8 @@ export default function Home() {
             <p style={{ margin: 0, lineHeight: 1.6, fontSize: "clamp(14px, 2.4vw, 16px)" }}>
               C’est un jeu à niveaux : termine un défi pour <b>débloquer le suivant</b>.
               Chaque niveau est un mini-jeu dans un univers différent (péniche,
-              trompette, cuisine, shabbat, parkour, cinéma, ken). Progresse et compose
-              ton propre spectacle final.
+              trompette, cuisine, parkour, cinéma, ken). Progresse et arrive
+              au combat final.
             </p>
           </section>
 

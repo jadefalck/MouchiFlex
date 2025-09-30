@@ -21,6 +21,7 @@ export default function Cuisine({ onComplete /* unused now */ }) {
 
   // UI
   const [level, setLevel] = useState(1); // 1..3
+  const [unlockedMax, setUnlockedMax] = useState(1); // ← NEW: niveau max débloqué
   const [started, setStarted] = useState(false);
   const [paused, setPaused] = useState(false);
   const [message, setMessage] = useState("");
@@ -260,6 +261,14 @@ export default function Cuisine({ onComplete /* unused now */ }) {
         setMessage("✅ Parfait ! Service prêt !");
         setStarted(false);
         setResult("win");
+
+        // NEW: déverrouille le niveau suivant
+        if (level < 3) {
+          const next = level + 1;
+          const newMax = Math.max(unlockedMax, next);
+          setUnlockedMax(newMax);
+          try { localStorage.setItem("cuisine_unlocked_max", String(newMax)); } catch {}
+        }
       }
 
       rafRef.current = requestAnimationFrame(loop);
@@ -267,7 +276,7 @@ export default function Cuisine({ onComplete /* unused now */ }) {
 
     rafRef.current = requestAnimationFrame(loop);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [started, paused, level]);
+  }, [started, paused, level, unlockedMax]);
 
   // Exit fullscreen when a result appears
   useEffect(() => {
@@ -289,6 +298,7 @@ export default function Cuisine({ onComplete /* unused now */ }) {
     if (level < 3) {
       const next = level + 1;
       try { localStorage.setItem("cuisine_unlocked_max", String(next)); } catch {}
+      setUnlockedMax(next); // ← NEW: garder l'état local synchro
       setLevel(next);
       prepare(next);
       setShowJoker(false);
@@ -299,13 +309,14 @@ export default function Cuisine({ onComplete /* unused now */ }) {
     }
   });
 
-  // au montage : reprendre niveau max débloqué par joker (persisté)
+  // au montage : reprendre niveau max débloqué (persisté)
   useEffect(() => {
     try {
       const s = localStorage.getItem("cuisine_unlocked_max");
       if (s) {
         const max = Math.max(1, Math.min(3, parseInt(s, 10) || 1));
-        setLevel(max);
+        setUnlockedMax(max);     // ← NEW
+        setLevel(max);           // comportement d’origine
       }
     } catch {}
   }, []);
@@ -367,19 +378,29 @@ export default function Cuisine({ onComplete /* unused now */ }) {
         <div style={{ width: "100%", maxWidth: 980, marginBottom: 12, padding: "0 6px", textAlign: "center" }}>
           <div style={{ display: "inline-flex", gap: 8, alignItems: "center", flexWrap: "wrap", marginBottom: 10 }}>
             <span style={{ fontWeight: 700 }}>Niveau :</span>
-            {[1,2,3].map(n => (
-              <button
-                key={n}
-                onClick={() => { setLevel(n); prepare(n); }}
-                style={{
-                  padding: "6px 10px",
-                  borderRadius: 9999,
-                  border: `1px solid ${n === level ? RED : "#e5e7eb"}`,
-                  background: n === level ? "rgba(220,38,38,.1)" : "#fff",
-                  fontWeight: 800,
-                }}
-              >{n}</button>
-            ))}
+            {[1,2,3].map(n => {
+              const locked = n > unlockedMax; // ← NEW
+              return (
+                <button
+                  key={n}
+                  onClick={() => { if (!locked) { setLevel(n); prepare(n); } }}
+                  style={{
+                    padding: "6px 10px",
+                    borderRadius: 9999,
+                    border: `1px solid ${n === level ? RED : "#e5e7eb"}`,
+                    background: n === level ? "rgba(220,38,38,.1)" : "#fff",
+                    fontWeight: 800,
+                    opacity: locked ? .45 : 1,          // ← NEW (feedback visuel)
+                    cursor: locked ? "not-allowed" : "pointer", // ← NEW
+                  }}
+                  disabled={locked} // ← NEW (bloque le clic)
+                  title={locked ? "Niveau verrouillé" : `Aller au niveau ${n}`}
+                  aria-pressed={n === level}
+                >
+                  {locked ? "🔒 " : ""}{n}
+                </button>
+              );
+            })}
 
             {!started ? (
               <button
